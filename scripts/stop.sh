@@ -10,7 +10,7 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_DIR"
 
 # Kill wrapper processes via PID files
-for pidfile in whisper.pid supertonic.pid; do
+for pidfile in agent.pid whisper.pid supertonic.pid; do
     if [ -f "$PROJECT_DIR/$pidfile" ]; then
         pid=$(cat "$PROJECT_DIR/$pidfile")
         if kill -0 "$pid" 2>/dev/null; then

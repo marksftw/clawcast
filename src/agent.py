@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import logging
 
+import httpx
 from livekit import agents, api, rtc
 from livekit.agents import (
     Agent,
@@ -91,12 +92,13 @@ async def entrypoint(ctx: agents.JobContext):
             recorder.log_host_speech(event.transcript)
 
     @session.on("conversation_item_added")
-    def on_item_added(event: ConversationItemAddedEvent):
+    async def on_item_added(event: ConversationItemAddedEvent):
         if event.item.role == "assistant":
             text = event.item.text_content
             if text:
                 logger.info("[Agent] %s", text)
-                recorder.log_agent_response(text)
+                audio_data = await _pop_tts_audio()
+                recorder.log_agent_response(text, audio_data=audio_data)
 
     # Handle disconnection
     @ctx.room.on("disconnected")
@@ -114,6 +116,18 @@ async def entrypoint(ctx: agents.JobContext):
     await session.generate_reply(
         instructions="Greet the host warmly. Introduce yourself briefly and say you're excited to be on the show."
     )
+
+
+async def _pop_tts_audio() -> bytes | None:
+    """Pop cached TTS audio from the Supertonic wrapper for archival."""
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(f"{cfg.tts.base_url.rstrip('/v1')}/v1/audio/pop")
+            if resp.status_code == 200:
+                return resp.content
+    except Exception:
+        logger.debug("Could not retrieve TTS audio for archival", exc_info=True)
+    return None
 
 
 async def _start_egress(room_name: str) -> None:

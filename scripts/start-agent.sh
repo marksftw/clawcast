@@ -13,4 +13,7 @@ export LIVEKIT_API_KEY="${CLAWCAST_LIVEKIT_API_KEY:-devkey}"
 export LIVEKIT_API_SECRET="${CLAWCAST_LIVEKIT_API_SECRET:-secret}"
 
 cd "$PROJECT_DIR"
-exec python3 src/agent.py connect "$@"
+python3 src/agent.py connect "$@" &
+echo $! > "$PROJECT_DIR/agent.pid"
+echo "Agent started (PID $(cat "$PROJECT_DIR/agent.pid"))"
+wait

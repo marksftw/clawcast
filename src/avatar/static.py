@@ -7,10 +7,13 @@ on a configurable background color. Pushes at 5fps.
 from __future__ import annotations
 
 import asyncio
+import logging
 from pathlib import Path
 
 from livekit import rtc
 from PIL import Image
+
+logger = logging.getLogger("clawcast.avatar")
 
 CANVAS_WIDTH = 1280
 CANVAS_HEIGHT = 720
@@ -39,6 +42,8 @@ def render_frame(avatar_path: str, bg_color: str = "#000000") -> bytes:
         x = (CANVAS_WIDTH - AVATAR_SIZE) // 2
         y = (CANVAS_HEIGHT - AVATAR_SIZE) // 2
         canvas.paste(avatar, (x, y), avatar)
+    else:
+        logger.warning("Avatar image not found: %s — using plain background", avatar_path)
 
     return canvas.tobytes("raw", "RGBA")
 

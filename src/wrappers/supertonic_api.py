@@ -7,16 +7,23 @@ Run: uvicorn src.wrappers.supertonic_api:app --port 8200
 from __future__ import annotations
 
 import io
+import threading
+from collections import deque
 
 import numpy as np
 import scipy.io.wavfile
 from fastapi import FastAPI, Request
-from fastapi.responses import Response
+from fastapi.responses import JSONResponse, Response
 from supertonic import TTS
 
 app = FastAPI(title="Clawcast Supertonic TTS")
 
 tts: TTS | None = None
+
+# Cache recent audio for archival retrieval by the agent.
+# Each entry: {"text": str, "wav_bytes": bytes}
+_audio_cache: deque[dict] = deque(maxlen=64)
+_cache_lock = threading.Lock()
 
 # Map OpenAI-style voice names to Supertonic voice styles.
 # Users can pass either the Supertonic name directly (M1, F3, etc.)
@@ -64,13 +71,34 @@ async def synthesize(request: Request):
 
     buf = io.BytesIO()
     scipy.io.wavfile.write(buf, SAMPLE_RATE, audio)
-    buf.seek(0)
+    wav_bytes = buf.getvalue()
+
+    # Cache for archival retrieval
+    with _cache_lock:
+        _audio_cache.append({"text": text, "wav_bytes": wav_bytes})
 
     return Response(
-        content=buf.read(),
+        content=wav_bytes,
         media_type="audio/wav",
         headers={"Content-Type": "audio/wav"},
     )
+
+
+@app.post("/v1/audio/pop")
+async def pop_audio():
+    """Pop the oldest cached audio entry. Used by the agent for archival."""
+    with _cache_lock:
+        if _audio_cache:
+            entry = _audio_cache.popleft()
+            return Response(
+                content=entry["wav_bytes"],
+                media_type="audio/wav",
+                headers={
+                    "Content-Type": "audio/wav",
+                    "X-Text": entry["text"][:200],
+                },
+            )
+    return JSONResponse(status_code=204, content=None)
 
 
 @app.get("/health")
