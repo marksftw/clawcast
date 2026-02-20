@@ -15,8 +15,6 @@ services:
       - "7881:7881"    # WebRTC TCP
       - "3478:3478/udp" # TURN
       - "50000-50100:50000-50100/udp"  # WebRTC media (narrowed range for dev)
-    environment:
-      - LIVEKIT_CONFIG
     command: --config /etc/livekit.yaml
     volumes:
       - ./livekit.yaml:/etc/livekit.yaml:ro

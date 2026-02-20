@@ -32,5 +32,8 @@ Thumbs.db
 # PID files (created by start-infra.sh)
 *.pid
 
+# Logs (created by start-infra.sh / start-agent.sh)
+logs/
+
 # Whisper models cache
 models/

@@ -26,5 +26,3 @@ httpx>=0.24.0
 # Config
 pyyaml>=6.0
 
-# Token generation
-pyjwt>=2.0.0
