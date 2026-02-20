@@ -1,0 +1,36 @@
+# Config with secrets
+clawcast.yaml
+
+# Sessions data
+sessions/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PID files (created by start-infra.sh)
+*.pid
+
+# Whisper models cache
+models/

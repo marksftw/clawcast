@@ -1,0 +1,41 @@
+livekit:
+  url: "ws://localhost:7880"
+  api_key: "devkey"
+  api_secret: "secret"
+
+agent:
+  name: "ClawcastAgent"
+  system_prompt: |
+    You are an AI podcast guest. You're knowledgeable about
+    AI, privacy, Bitcoin, and technology. Keep responses concise
+    (2-3 sentences). Be conversational and witty. Ask follow-up
+    questions when appropriate.
+  avatar: "./assets/avatar.png"
+  avatar_bg_color: "#000000"
+
+llm:
+  base_url: "http://localhost:8080/v1"
+  api_key: "not-needed"
+  model: "gpt-oss-120b"
+  temperature: 0.7
+  max_tokens: 200
+
+stt:
+  base_url: "http://localhost:8100/v1"
+  model: "small.en"
+
+tts:
+  base_url: "http://localhost:8200/v1"
+  voice: "M1"
+  speed: 1.2
+
+vad:
+  min_speech_duration: 0.5
+  silence_threshold: 1.0
+  interrupt_min_duration: 1.5
+
+egress:
+  mode: "record"
+  output_dir: "./sessions"
+  layout: "grid"
+  resolution: "1280x720"

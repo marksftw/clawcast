@@ -1,0 +1,27 @@
+# LiveKit
+livekit-agents>=1.4.0
+livekit-plugins-openai>=1.0.0
+livekit-plugins-silero>=1.0.0
+livekit-api>=1.0.0
+
+# API wrappers
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# STT
+faster-whisper>=1.0.0
+librosa>=0.10.0
+
+# TTS
+supertonic
+scipy>=1.10.0
+
+# Avatar
+Pillow>=10.0.0
+numpy>=1.24.0
+
+# Config
+pyyaml>=6.0
+
+# Token generation
+pyjwt>=2.0.0

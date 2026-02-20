@@ -1,0 +1,8 @@
+log_level: info
+api_key: devkey
+api_secret: secret
+ws_url: ws://livekit:7880
+insecure: true
+file_output:
+  local:
+    - /out
